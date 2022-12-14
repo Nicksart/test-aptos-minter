@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aptos playground</title>
+</head>
+<body>
+APTOS
+<button onclick="connectWallet()">CONNECT</button>
+
+<br><br>
+<div>
+    <h2>CREATE TOKEN FUNCTIONALITY</h2>
+    <input id="canmeft" type="text" placeholder="Collection Name">
+    <input id="tokennmae" type="text" placeholder="Token Name">
+    <input id="tokendesc" type="text" placeholder="Token Description">
+    <input id="tokensply" type="number" placeholder="Token Spply">
+    <input id="imageurl" type="text" placeholder="Token Image URL">
+    <button onclick="createToken()">CREATE TOKEN</button>
+</div>
+<br><br>
+<div>
+    <h2>CREATE COLLECTION FUNCTIONALITY</h2>
+    <input id="cname" type="text" placeholder="Collection Name">
+    <input id="cdesc" type="text" placeholder="Collection Descroption">
+    <input id="url" type="text" placeholder="Collection Image URL">
+    <button onclick="createCollection()">CREATE COLLECTION</button>
+
+</div>
+<div>
+    <h2>SHOW ACCOUNT TOKENS</h2>
+ 
+    <button onclick="createCollection()">SHOW ME</button>
+</div>
+<div>
+    <h2>SEND NFT FUNC</h2>
+    <input type="text" placeholder="Token Address">
+    <input type="text" placeholder="Reciever Address">
+
+    <button onclick="sendNFT()">Send</button>
+
+</div>
+</body>
+<script>
+async function connectWallet() {
+    if ("martian" in window) {
+        console.log(window.martian)
+    }
+    await window.martian.connect();
+}
+
+async function createToken() {
+    const tokenCollectionName = document.getElementById("canmeft").value;
+    const tokenName = document.getElementById("tokennmae").value;
+    const tokenDescroption = document.getElementById("tokendesc").value;
+    const tokenSupply = document.getElementById("tokensply").value;
+    const tokenImage = document.getElementById("imageurl").value;
+    const txnHash = await window.martian.createToken(tokenCollectionName, tokenName, tokenDescroption, tokenSupply, tokenImage)
+    const data = await window.martian.getTransaction(txnHash);
+    console.log(data)
+}
+
+async function createCollection() {
+    const collectionName = document.getElementById("cname").value;
+    const collectionDesc = document.getElementById("cdesc").value;
+    const collectionUrl = document.getElementById("url").value;
+    const txnHash = await window.martian.createCollection(collectionName, collectionDesc, collectionUrl);
+    const data = await window.martian.getTransaction(txnHash);
+    console.log(data)
+}
+
+async function getTokens() {
+    const response = await window.martian.connect();
+    const address = response.address;
+    const transactions = await window.martian.getAccountResources(address);
+    console.log(transactions);
+}
+
+async function sendNFT() {
+    // Generate a transaction
+const response = await window.martian.connect();
+const sender = response.address;
+const payload = {
+    function: "0x1::coin::transfer",
+    type_arguments: ["0x1::aptos_coin::AptosCoin"],
+    arguments: ["0x96da8990a7230a82250e85d943ca95e2e9319e5558b0f544f2d7a6aad327e46f", 50]
+};
+const transactionHash = await window.martian.generateSignAndSubmitTransaction(sender, payload);
+}
+
+// $(document).ready(function () {
+
+// });
+
+</script>
+</html>
